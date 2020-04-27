@@ -1,5 +1,6 @@
 # gifsplit
 ![](ss/kite.0.gif) ![](ss/kite.1.gif)
+
 ![](ss/kite.2.gif) ![](ss/kite.3.gif)
 
 A Python script that splits an animated GIF into four evenly-sized ones.
