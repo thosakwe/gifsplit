@@ -1,0 +1,83 @@
+#!/usr/bin/env python3
+from __future__ import print_function
+
+import os
+import sys
+from PIL import Image
+
+def print_usage():
+    print("usage: gifsplit <filename>")
+
+if len(sys.argv) < 2:
+    print_usage()
+    sys.exit(1)
+
+img = Image.open(sys.argv[1])
+if not img.is_animated:
+    print("error: image is not an animated GIF")
+    sys.exit(1)
+
+width = img.width / 2
+height = img.height / 2
+right_width = width
+lower_height = height
+
+# while (width + right_width) > img.width:
+#     right_width -= 2
+
+# while (height + lower_height) > img.height:
+#     lower_height -= 2
+
+# Create four arrays of image frames
+frames_0 = []
+frames_1 = []
+frames_2 = []
+frames_3 = []
+
+duration = 0
+
+for frame in range(0, img.n_frames):
+    img.seek(frame)
+    
+    if duration <= 0:
+        duration = img.info['duration']
+
+    img_0 = img.crop((0, 0, width, height))
+    img_1 = img.crop((width, 0, width + right_width, height))
+    img_2 = img.crop((0, height, width, height + lower_height))
+    img_3 = img.crop((width, height, width + right_width, height + lower_height))
+
+    frames_0.append(img_0)
+    frames_1.append(img_1)
+    frames_2.append(img_2)
+    frames_3.append(img_3)
+
+dirname = os.path.dirname(sys.argv[1])
+basename = os.path.splitext(sys.argv[1])[0]
+base = os.path.join(dirname, basename)
+
+img_file_0 = base + ".0.gif"
+img_file_1 = base + ".1.gif"
+img_file_2 = base + ".2.gif"
+img_file_3 = base + ".3.gif"
+
+frames_0[0].save(img_file_0,
+        save_all=True,
+        append_images=frames_0[1:],
+        duration=duration,
+        loop=1)
+frames_1[1].save(img_file_1,
+        save_all=True,
+        append_images=frames_1[1:],
+        duration=duration,
+        loop=1)
+frames_2[2].save(img_file_2,
+        save_all=True,
+        append_images=frames_2[1:],
+        duration=duration,
+        loop=1)
+frames_3[3].save(img_file_3,
+        save_all=True,
+        append_images=frames_3[1:],
+        duration=duration,
+        loop=1)
